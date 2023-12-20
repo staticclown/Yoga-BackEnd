@@ -6,10 +6,19 @@ from .models import UserLogin, UserSignup
 from .serializers import UserLogin_serializer, UserSignup_serializer
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
 
 
+@csrf_exempt
 def home(request):
-    return HttpResponse("hi")
+    if request.method == "POST":
+        data = json.loads(request.body.decode("utf-8"))
+        frame_data = data.get("frameData")
+        # Process the frame data as needed
+        print(frame_data)
+        return JsonResponse({"status": "success"})
 
 
 class UserLoginView(generics.CreateAPIView):
