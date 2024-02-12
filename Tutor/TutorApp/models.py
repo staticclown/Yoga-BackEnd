@@ -11,3 +11,8 @@ class UserSignup(models.Model):
     signuppassword = models.CharField(max_length=30)
     signupdob = models.CharField(max_length=30)
     signupemail = models.CharField(max_length=30, primary_key=True)
+
+
+class Image(models.Model):
+    image = models.ImageField(upload_to="images/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
