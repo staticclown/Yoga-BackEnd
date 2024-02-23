@@ -1,40 +1,23 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.http import HttpResponse
 from rest_framework import generics
-from .models import UserLogin, UserSignup
-from .serializers import UserLogin_serializer, UserSignup_serializer
+from .models import UserLogin, UserSignup,Image
+from .serializers import UserLogin_serializer, UserSignup_serializer,ImageSerializer
 from rest_framework.response import Response
-from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.http import JsonResponse
-
 from rest_framework.views import APIView
-from .models import Image
-from .serializers import ImageSerializer
-import os
-
 
 class ImageView(APIView):
     def post(self, request, *args, **kwargs):
-        # Delete existing images
-        Image.objects.all().delete()
-
+        
         serializer = ImageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class ImageDelete(APIView):
 
-@csrf_exempt
-def home(request):
-    if request.method == "POST":
-        data = json.loads(request.body.decode("utf-8"))
-        frame_data = data.get("frameData")
-        print(frame_data)
-        return JsonResponse({"status": "success"})
+    def post(self, request, *args, **kwargs):
+        Image.objects.all().delete()
 
 
 class UserLoginView(generics.CreateAPIView):
