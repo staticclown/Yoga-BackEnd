@@ -20,5 +20,5 @@ class UserSignup_serializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = [ "image", "uploaded_at"]
+        fields = [ "image"]
         

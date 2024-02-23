@@ -33,7 +33,6 @@ def home(request):
     if request.method == "POST":
         data = json.loads(request.body.decode("utf-8"))
         frame_data = data.get("frameData")
-        # Process the frame data as needed
         print(frame_data)
         return JsonResponse({"status": "success"})
 
@@ -58,6 +57,26 @@ class UserLoginView(generics.CreateAPIView):
             return Response("NO", status=status.HTTP_200_OK)
 
 
-class UserSignupView(generics.ListCreateAPIView):
-    queryset = UserSignup.objects.all()
+class UserSignupView(generics.CreateAPIView):
     serializer_class = UserSignup_serializer
+    def post(self, request, *args, **kwargs):
+        requestbody = dict(request.data)
+        tempmail = requestbody["signupemail"]
+        tempname = requestbody["signupname"]
+        tempdob = requestbody["signupdob"]
+        temppass = requestbody["signuppassword"]
+
+        obj=UserSignup.objects.all()
+
+        for i in obj:
+            if i.signupemail==tempmail:
+                return Response("NO", status=status.HTTP_200_OK)
+
+        newEntry = UserSignup(
+            signupname=tempname,
+            signuppassword=temppass,
+            signupdob=tempdob,
+            signupemail=tempmail,
+        )
+        newEntry.save()
+        return Response("SUCCESS", status=status.HTTP_200_OK)
