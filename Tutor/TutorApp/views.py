@@ -1,11 +1,11 @@
 from django.http import HttpResponse
 from rest_framework import generics
-from .models import UserLogin, UserSignup,Image
-from .serializers import UserLogin_serializer, UserSignup_serializer,ImageSerializer
+from .models import UserLogin, UserSignup,Image,Userbegupdate,UserStatus
+from .serializers import UserLogin_serializer, UserSignup_serializer,ImageSerializer,UserbegupdateSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-class ImageView(APIView):
+class ImageEntry(APIView):
     def post(self, request, *args, **kwargs):
         
         serializer = ImageSerializer(data=request.data)
@@ -62,4 +62,23 @@ class UserSignupView(generics.CreateAPIView):
             signupemail=tempmail,
         )
         newEntry.save()
+
+        newEntry = UserStatus(
+            index=0,
+            mail_id=tempmail,
+            level=0,
+            beginner=1,
+        )
+        newEntry.save()
         return Response("SUCCESS", status=status.HTTP_200_OK)
+
+class UserUpdate(generics.CreateAPIView):
+    serializer_class = UserbegupdateSerializer
+
+    def post(self, request, *args, **kwargs):
+        requestbody = dict(request.data)
+        tempmail = requestbody["email"]
+        tempname = requestbody["beg"]
+        obj = UserStatus.objects.get(tid=title)
+        obj.beginner=beg
+        obj.save()
