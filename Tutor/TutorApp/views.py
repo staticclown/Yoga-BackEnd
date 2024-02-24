@@ -19,6 +19,10 @@ class ImageDelete(APIView):
     def post(self, request, *args, **kwargs):
         Image.objects.all().delete()
 
+class ImageView(generics.ListCreateAPIView):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+
 
 class UserLoginView(generics.CreateAPIView):
     serializer_class = UserLogin_serializer
