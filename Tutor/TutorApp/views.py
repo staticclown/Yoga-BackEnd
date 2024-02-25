@@ -75,6 +75,7 @@ class UserSignupView(generics.CreateAPIView):
             beginner=1,
         )
         newEntry.save()
+    
         return Response("SUCCESS", status=status.HTTP_200_OK)
 
 class UserUpdate(generics.CreateAPIView):

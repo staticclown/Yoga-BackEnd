@@ -20,7 +20,7 @@ class UserStatus(models.Model):
 
     beginner=models.IntegerField()
     level=models.IntegerField()
-    mail_id=models.ForeignKey(UserSignup, on_delete=models.CASCADE)
+    mail_id=models.CharField(max_length=50,primary_key=True)
     index=models.IntegerField()
 
 class Userpose(models.Model):
