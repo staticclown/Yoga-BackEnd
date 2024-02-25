@@ -4,6 +4,7 @@ from .models import UserLogin, UserSignup,Image,Userbegupdate,UserStatus
 from .serializers import UserLogin_serializer, UserSignup_serializer,ImageSerializer,UserbegupdateSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 class ImageEntry(APIView):
     def post(self, request, *args, **kwargs):
@@ -82,7 +83,7 @@ class UserUpdate(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         requestbody = dict(request.data)
         tempmail = requestbody["email"]
-        tempname = requestbody["beg"]
-        obj = UserStatus.objects.get(tid=title)
-        obj.beginner=beg
+        tempbeg = requestbody["beg"]
+        obj = UserStatus.objects.get( mail_id=tempmail)
+        obj.beginner=tempbeg
         obj.save()
