@@ -8,4 +8,6 @@ urlpatterns = [
     path("imgdelete/", views.ImageDelete.as_view()),
     path("userupdate/", views.UserUpdate.as_view()),
     path("imageview/", views.ImageView.as_view()),
+    path("levelupdate/", views.LevelUpdate.as_view()),
+    path("indexupdate/", views.IndexUpdate.as_view()),
 ]

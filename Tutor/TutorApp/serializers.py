@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserLogin, UserSignup,Image,Userpose,UserStatus,Userbegupdate
+from .models import UserLogin, UserSignup,Image,Userpose,UserStatus,Userbegupdate,Level,Index
 
 class UserLogin_serializer(serializers.ModelSerializer):
     class Meta:
@@ -41,3 +41,15 @@ class UserbegupdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Userbegupdate
         fields = ["update","email"]
+
+
+class LevelupdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Level
+        fields = ["updatelevel", "email"]
+
+
+class IndexupdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Index
+        fields = ["updateindex", "email"]

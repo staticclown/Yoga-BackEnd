@@ -35,3 +35,13 @@ class Userpose(models.Model):
 class Userbegupdate(models.Model):
     update = models.IntegerField()
     email = models.CharField(max_length=30)
+
+class Level(models.Model):
+    updatelevel=models.IntegerField()
+    email = models.CharField(max_length=30)
+
+
+class Index(models.Model):
+    updateindex=models.IntegerField()
+    email = models.CharField(max_length=30)
+
