@@ -33,5 +33,5 @@ class Userpose(models.Model):
     lock=models.IntegerField()
 
 class Userbegupdate(models.Model):
-    beg = models.IntegerField()
+    update = models.IntegerField()
     email = models.CharField(max_length=30)

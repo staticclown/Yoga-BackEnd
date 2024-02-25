@@ -40,4 +40,4 @@ class UserStatusSerializer(serializers.ModelSerializer):
 class UserbegupdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Userbegupdate
-        fields = [" beg","email"]
+        fields = ["update","email"]

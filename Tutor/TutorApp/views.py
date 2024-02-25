@@ -84,7 +84,8 @@ class UserUpdate(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         requestbody = dict(request.data)
         tempmail = requestbody["email"]
-        tempbeg = requestbody["beg"]
-        obj = UserStatus.objects.get( mail_id=tempmail)
+        tempbeg = requestbody["update"]
+        obj = UserStatus.objects.get(mail_id=tempmail)
         obj.beginner=tempbeg
         obj.save()
+        return Response("SUCCESS", status=status.HTTP_200_OK)
