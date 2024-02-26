@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserLogin, UserSignup,Image,Userpose,UserStatus,Userbegupdate,Level,Index
+from .models import UserLogin, UserSignup,ImageStore,Userpose,UserStatus,Userbegupdate,Level,Index
 
 class UserLogin_serializer(serializers.ModelSerializer):
     class Meta:
@@ -13,7 +13,7 @@ class UserSignup_serializer(serializers.ModelSerializer):
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Image
+        model = ImageStore
         fields = [ "image"]
 
 

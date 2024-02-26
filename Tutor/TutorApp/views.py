@@ -3,7 +3,7 @@ from rest_framework import generics
 from .models import (
     UserLogin,
     UserSignup,
-    Image,
+    ImageStore,
     Userbegupdate,
     UserStatus,
     Level,
@@ -19,6 +19,15 @@ from .serializers import LevelupdateSerializer, IndexupdateSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+import cv2
+import mediapipe as mp
+import numpy as np
+from PIL import Image
+
+
+def skelton():
+    image_object = ImageStore.objects.get(pk=1) 
+    image_url = image_object.image.url
 
 
 class ImageEntry(APIView):
@@ -27,6 +36,7 @@ class ImageEntry(APIView):
         serializer = ImageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            skelton()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -34,11 +44,11 @@ class ImageEntry(APIView):
 class ImageDelete(APIView):
 
     def post(self, request, *args, **kwargs):
-        Image.objects.all().delete()
+        ImageStore.objects.all().delete()
 
 
 class ImageView(generics.ListCreateAPIView):
-    queryset = Image.objects.all()
+    queryset = ImageStore.objects.all()
     serializer_class = ImageSerializer
 
 

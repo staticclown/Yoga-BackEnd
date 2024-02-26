@@ -13,7 +13,7 @@ class UserSignup(models.Model):
     signupemail = models.CharField(max_length=30, primary_key=True)
 
 
-class Image(models.Model):
+class ImageStore(models.Model):
     image = models.ImageField(upload_to="Userimages/",max_length=30000)
 
 class UserStatus(models.Model):
