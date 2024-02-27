@@ -33,7 +33,7 @@ class Userpose(models.Model):
     index_no=models.IntegerField()
     level=models.IntegerField()
     img=models.ImageField(upload_to="Poseimages/",max_length=30000)
-    description=models.CharField(max_length=500)
+    description=models.CharField(max_length=5000)
 
 class Userbegupdate(models.Model):
     update = models.IntegerField()
