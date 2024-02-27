@@ -10,7 +10,7 @@ urlpatterns = [
     path("imageview/", views.ImageView.as_view()),
     path("levelupdate/", views.LevelUpdate.as_view()),
     path("indexupdate/", views.IndexUpdate.as_view()),
+    path("userpose/", views.UserposeUpdate.as_view()),
     path("userStatus/", views.UserStatus.as_view()),
     path("userDetails/", views.UserDetails.as_view()),
-
 ]

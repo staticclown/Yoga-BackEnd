@@ -284,7 +284,7 @@ class UserposeUpdate(generics.ListCreateAPIView):
     serializer_class = UserposeSerializer
 
 
-class UserposeUpdate(generics.RetrieveUpdateAPIView):
+class UserStatus(generics.ListCreateAPIView):
     queryset = UserStatus.objects.all()
     serializer_class = UserStatusSerializer
 
