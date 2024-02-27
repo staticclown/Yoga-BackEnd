@@ -16,6 +16,11 @@ class UserSignup(models.Model):
 class ImageStore(models.Model):
     image = models.ImageField(upload_to="Userimages/",max_length=30000)
 
+
+class TempImagestore(models.Model):
+    image = models.ImageField(upload_to="tempimages/", max_length=30000)
+
+
 class UserStatus(models.Model):
 
     beginner=models.IntegerField()
@@ -44,4 +49,3 @@ class Level(models.Model):
 class Index(models.Model):
     updateindex=models.IntegerField()
     email = models.CharField(max_length=30)
-

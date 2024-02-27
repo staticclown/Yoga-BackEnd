@@ -8,12 +8,16 @@ from .models import (
     UserStatus,
     Level,
     Index,
+    TempImagestore,
+    Userpose,
 )
 from .serializers import (
     UserLogin_serializer,
     UserSignup_serializer,
     ImageSerializer,
     UserbegupdateSerializer,
+    UserposeSerializer,
+    UserStatusSerializer,
 )
 from .serializers import LevelupdateSerializer, IndexupdateSerializer
 from rest_framework.response import Response
@@ -23,11 +27,140 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from PIL import Image
-
+import os
+import shutil
 
 def skelton():
     image_object = ImageStore.objects.get(pk=1) 
     image_url = image_object.image.url
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        new_image_instance = TempImagestore()
+
+        new_image_instance.image.save(image_object.image.name, ContentFile(response.content), save=True)
+        new_image_instance.save()
+
+    def calculate_angle(a,b,c):
+        a = np.array(a) # First
+        b = np.array(b) # Mid
+        c = np.array(c) # End
+
+        radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
+        angle = np.abs(radians*180.0/np.pi)
+
+        if angle >180.0:
+            angle = 360-angle
+
+        return angle 
+    mp_drawing = mp.solutions.drawing_utils
+    mp_pose = mp.solutions.pose
+
+    # Load the image
+    image_path = image_url
+    image = cv2.imread(image_path)
+
+    # Recolor image to RGB
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image.flags.writeable = False
+
+    ## Setup mediapipe instance
+    with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
+        # Recolor back to BGR
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+        # Extract landmarks
+        results = pose.process(image)
+        landmarks = results.pose_landmarks.landmark
+
+        # Get coordinates
+        shoulder = [
+            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
+        ]
+        elbow = [
+            landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y,
+        ]
+        wrist = [
+            landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y,
+        ]
+        shoulder1 = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
+        ]
+        elbow1 = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y,
+        ]
+        wrist1 = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y,
+        ]
+        hip1 = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
+        ]
+        knee1 = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y,
+        ]
+        ankle1 = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y,
+        ]
+
+        # Calculate angles
+        angle = calculate_angle(shoulder, elbow, wrist)
+        angle1 = calculate_angle(shoulder1, elbow1, wrist1)
+        angle2 = calculate_angle(hip1, knee1, ankle1)
+
+        # Visualize angles
+        cv2.putText(
+            image,
+            str(angle),
+            tuple(np.multiply(elbow, [image.shape[1], image.shape[0]]).astype(int)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            image,
+            str(angle1),
+            tuple(np.multiply(elbow1, [image.shape[1], image.shape[0]]).astype(int)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            image,
+            str(angle2),
+            tuple(np.multiply(knee1, [image.shape[1], image.shape[0]]).astype(int)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+
+        # Render detections
+        mp_drawing.draw_landmarks(
+            image,
+            results.pose_landmarks,
+            mp_pose.POSE_CONNECTIONS,
+            mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
+            mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
+        )
+
+        # Display the image
+        cv2.imshow("Mediapipe Feed", image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
 class ImageEntry(APIView):
@@ -144,3 +277,8 @@ class IndexUpdate(generics.CreateAPIView):
         obj.index = tempindex
         obj.save()
         return Response("SUCCESS", status=status.HTTP_200_OK)
+
+
+class UserposeUpdate(generics.ListCreateAPIView):
+    queryset = Userpose.objects.all()
+    serializer_class = UserposeSerializer
