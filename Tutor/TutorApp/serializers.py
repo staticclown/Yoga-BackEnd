@@ -21,8 +21,6 @@ class UserposeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Userpose
         fields = [
-            " pose_id",
-            "lock",
             "description",
             "img",
             "level",
