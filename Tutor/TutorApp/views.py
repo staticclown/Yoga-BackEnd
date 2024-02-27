@@ -282,3 +282,13 @@ class IndexUpdate(generics.CreateAPIView):
 class UserposeUpdate(generics.ListCreateAPIView):
     queryset = Userpose.objects.all()
     serializer_class = UserposeSerializer
+
+
+class UserposeUpdate(generics.RetrieveUpdateAPIView):
+    queryset = UserStatus.objects.all()
+    serializer_class = UserStatusSerializer
+
+
+class UserDetails(generics.RetrieveUpdateAPIView):
+    queryset = UserSignup.objects.all()
+    serializer_class = UserSignup_serializer
