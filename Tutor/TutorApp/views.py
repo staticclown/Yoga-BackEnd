@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from rest_framework import generics
+import requests
 from .models import (
     UserLogin,
     UserSignup,
@@ -31,14 +32,20 @@ import os
 import shutil
 
 def skelton():
-    image_object = ImageStore.objects.get(pk=1) 
-    image_url = image_object.image.url
-    response = requests.get(image_url)
-    if response.status_code == 200:
-        new_image_instance = TempImagestore()
+    # image_object = ImageStore.objects.first()
 
-        new_image_instance.image.save(image_object.image.name, ContentFile(response.content), save=True)
-        new_image_instance.save()
+    # image_url = image_object.image.url
+    # base_url = 'http://192.168.1.100:8000\Yoga-BackEnd\Tutor'  # Replace with your Django server's base URL
+    # absolute_image_url = f'{base_url}{image_url}'
+    # image_url=absolute_image_url
+    # print(image_url)
+    # response = requests.get(image_url)
+    # print(response.status_code)
+    # if response.status_code == 200:
+    #     new_image_instance = TempImagestore()
+    #     print("inside")
+    #     new_image_instance.image.save(image_object.image.name, ContentFile(response.content), save=True)
+    #     new_image_instance.save()
 
     def calculate_angle(a,b,c):
         a = np.array(a) # First
@@ -56,7 +63,11 @@ def skelton():
     mp_pose = mp.solutions.pose
 
     # Load the image
-    image_path = image_url
+    # image_path = image_store_instance.image
+    image_store_instance = ImageStore.objects.first()
+    image_path = image_store_instance.image.path
+    print("Image path:", image_path)
+    # Load the image using OpenCV
     image = cv2.imread(image_path)
 
     # Recolor image to RGB
@@ -158,9 +169,10 @@ def skelton():
         )
 
         # Display the image
-        cv2.imshow("Mediapipe Feed", image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("Mediapipe Feed", image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        image_store_instance.save()
 
 
 class ImageEntry(APIView):
