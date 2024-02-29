@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from rest_framework import generics
+import torch
+import pathlib
 import requests
 from .models import (
     UserLogin,
@@ -30,6 +32,10 @@ import numpy as np
 from PIL import Image
 import os
 import shutil
+
+
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 def skelton():
     # image_object = ImageStore.objects.first()
@@ -78,58 +84,58 @@ def skelton():
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         # Recolor back to BGR
         image.flags.writeable = True
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        image1 = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         # Extract landmarks
-        results = pose.process(image)
-        landmarks = results.pose_landmarks.landmark
-
-        # Get coordinates
-        shoulder = [
+        results = pose.process(image1)
+        # landmarks = results.pose_landmarks.landmark
+        if results.pose_landmarks:  # Check if pose_landmarks is not None
+            landmarks = results.pose_landmarks.landmark
+            shoulder = [
             landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
             landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
-        ]
-        elbow = [
+            ]
+            elbow = [
             landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
             landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y,
-        ]
-        wrist = [
+            ]
+            wrist = [
             landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
             landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y,
-        ]
-        shoulder1 = [
+            ]
+            shoulder1 = [
             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
-        ]
-        elbow1 = [
+            ]
+            elbow1 = [
             landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y,
-        ]
-        wrist1 = [
+            ]
+            wrist1 = [
             landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y,
-        ]
-        hip1 = [
+            ]
+            hip1 = [
             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
-        ]
-        knee1 = [
+            ]
+            knee1 = [
             landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y,
-        ]
-        ankle1 = [
+            ]
+            ankle1 = [
             landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y,
-        ]
+            ]
 
-        # Calculate angles
-        angle = calculate_angle(shoulder, elbow, wrist)
-        angle1 = calculate_angle(shoulder1, elbow1, wrist1)
-        angle2 = calculate_angle(hip1, knee1, ankle1)
+            # Calculate angles
+            angle = calculate_angle(shoulder, elbow, wrist)
+            angle1 = calculate_angle(shoulder1, elbow1, wrist1)
+            angle2 = calculate_angle(hip1, knee1, ankle1)
 
-        # Visualize angles
-        cv2.putText(
-            image,
+            # Visualize angles
+            cv2.putText(
+            image1,
             str(angle),
             tuple(np.multiply(elbow, [image.shape[1], image.shape[0]]).astype(int)),
             cv2.FONT_HERSHEY_SIMPLEX,
@@ -137,9 +143,9 @@ def skelton():
             (255, 255, 255),
             2,
             cv2.LINE_AA,
-        )
-        cv2.putText(
-            image,
+            )
+            cv2.putText(
+            image1,
             str(angle1),
             tuple(np.multiply(elbow1, [image.shape[1], image.shape[0]]).astype(int)),
             cv2.FONT_HERSHEY_SIMPLEX,
@@ -147,9 +153,9 @@ def skelton():
             (255, 255, 255),
             2,
             cv2.LINE_AA,
-        )
-        cv2.putText(
-            image,
+            )
+            cv2.putText(
+            image1,
             str(angle2),
             tuple(np.multiply(knee1, [image.shape[1], image.shape[0]]).astype(int)),
             cv2.FONT_HERSHEY_SIMPLEX,
@@ -157,22 +163,38 @@ def skelton():
             (255, 255, 255),
             2,
             cv2.LINE_AA,
-        )
+            )
 
         # Render detections
-        mp_drawing.draw_landmarks(
-            image,
+            mp_drawing.draw_landmarks(
+            image1,
             results.pose_landmarks,
             mp_pose.POSE_CONNECTIONS,
             mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
             mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
-        )
+            )
+        # Continue with your code that uses landmarks
+        else:
+        # Handle the case where pose_landmarks is None
+            print("No pose landmarks detected")
+
+        # Get coordinates
+        
 
         # Display the image
-        # cv2.imshow("Mediapipe Feed", image)
+        # cv2.imshow("Mediapipe Feed", image1)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
-        image_store_instance.save()
+        print(type(image1))
+        model = torch.hub.load('yolov5', 'custom', path='yolov5/best3.pt', source='local',force_reload=True)
+        model.conf = 0.1  # local repo
+        im = 'yolov5/q.jpg'  # file, Path, PIL.Image, OpenCV, nparray, list
+        print(type(im))
+        results = model(image)  # inference
+        results.save()
+        # image_store_instance = TempImagestore(image=image1)
+        
+        # image_store_instance.save()
 
 
 class ImageEntry(APIView):
