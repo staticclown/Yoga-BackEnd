@@ -3,6 +3,7 @@ from rest_framework import generics
 import torch
 import pathlib
 import requests
+import os
 from .models import (
     UserLogin,
     UserSignup,
@@ -30,8 +31,6 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from PIL import Image
-import os
-import shutil
 
 
 temp = pathlib.PosixPath
@@ -178,9 +177,7 @@ def skelton():
         print(type(im))
         results = model(image)  # inference
         results.save()
-        # image_store_instance = TempImagestore(image=image1)
-        
-        # image_store_instance.save()
+      
 
 
 class ImageEntry(APIView):
@@ -197,6 +194,18 @@ class ImageEntry(APIView):
 class ImageDelete(APIView):
 
     def post(self, request, *args, **kwargs):
+        
+        def delete_directory_contents(directory):
+            for filename in os.listdir(directory):
+                file_path = os.path.join(directory, filename)
+
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+            elif os.path.isdir(file_path):
+                delete_directory_contents(file_path)
+            os.rmdir(file_path)
+
+
         ImageStore.objects.all().delete()
 
 
