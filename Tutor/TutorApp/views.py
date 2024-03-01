@@ -38,21 +38,7 @@ temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 
 def skelton():
-    # image_object = ImageStore.objects.first()
-
-    # image_url = image_object.image.url
-    # base_url = 'http://192.168.1.100:8000\Yoga-BackEnd\Tutor'  # Replace with your Django server's base URL
-    # absolute_image_url = f'{base_url}{image_url}'
-    # image_url=absolute_image_url
-    # print(image_url)
-    # response = requests.get(image_url)
-    # print(response.status_code)
-    # if response.status_code == 200:
-    #     new_image_instance = TempImagestore()
-    #     print("inside")
-    #     new_image_instance.image.save(image_object.image.name, ContentFile(response.content), save=True)
-    #     new_image_instance.save()
-
+   
     def calculate_angle(a,b,c):
         a = np.array(a) # First
         b = np.array(b) # Mid
