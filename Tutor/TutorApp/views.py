@@ -31,10 +31,19 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from PIL import Image
-
+from django.http import HttpResponse
+import os
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
+
+
+
+def get_image(request, image_name):
+    image_path = os.path.join('path_to_your_image_directory', image_name)
+    with open(image_path, 'rb') as f:
+        return HttpResponse(f.read(), content_type="image/jpeg")  # Adjust content type based on your image type
+
 
 def skelton():
    
@@ -210,8 +219,8 @@ class ImageDelete(APIView):
 
 
 class ImageView(generics.ListCreateAPIView):
-    queryset = ImageStore.objects.all()
-    serializer_class = ImageSerializer
+    queryset = Userpose.objects.all()
+    serializer_class = UserposeSerializer
 
 
 class UserLoginView(generics.CreateAPIView):
