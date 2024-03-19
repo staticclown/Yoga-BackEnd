@@ -51,3 +51,9 @@ class IndexupdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Index
         fields = ["updateindex", "email"]
+
+
+class PoseviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Userpose
+        fields = ["poseName"]

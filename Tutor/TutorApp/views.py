@@ -22,6 +22,7 @@ from .serializers import (
     UserbegupdateSerializer,
     UserposeSerializer,
     UserStatusSerializer,
+    PoseviewSerializer,
 )
 from .serializers import LevelupdateSerializer, IndexupdateSerializer
 from rest_framework.response import Response
@@ -36,7 +37,6 @@ import os
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
-
 
 
 def get_image(request, image_name):
@@ -186,7 +186,6 @@ def skelton():
         print(type(im))
         results = model(image)  # inference
         results.save()
-      
 
 
 class ImageEntry(APIView):
@@ -218,9 +217,15 @@ class ImageDelete(APIView):
         ImageStore.objects.all().delete()
 
 
-class ImageView(generics.ListCreateAPIView):
-    queryset = Userpose.objects.all()
-    serializer_class = UserposeSerializer
+class ImageView(generics.CreateAPIView):
+    serializer_class = PoseviewSerializer
+    def post(self, request, *args, **kwargs):
+        requestbody = dict(request.data)
+        pose = requestbody["poseName"]
+        obj = Userpose.objects.get(poseName=pose)
+        image_path=obj.img.path
+        with open(image_path, 'rb') as f:
+            return HttpResponse(f.read(), content_type="image/*")
 
 
 class UserLoginView(generics.CreateAPIView):
