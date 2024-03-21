@@ -29,7 +29,7 @@ class UserStatus(models.Model):
     index=models.IntegerField()
 
 class Userpose(models.Model):
-    poseName=models.CharField(max_length=40)
+    poseName=models.CharField(max_length=70,primary_key=True)
     index_no=models.IntegerField()
     level=models.IntegerField()
     img=models.ImageField(upload_to="Poseimages/",max_length=30000)
